@@ -645,17 +645,20 @@ const triggerAIEngine = async () => {
   }
 }
 
-/* ==================== RESPONSIVE DESIGN ==================== */
+/* ==================== RESPONSIVE DESIGN (BACA VERTIKAL DI HP) ==================== */
 
-/* Tablet (1024px and below) */
+/* Tablet & Mobile (1024px and below) */
 @media (max-width: 1024px) {
   .layout-grid {
-    grid-template-columns: 1fr;
+    display: flex !important;      /* Paksa berubah dari grid jadi flexbox */
+    flex-direction: column !important; /* Paksa tumpukan biner turun ke bawah */
     gap: 20px;
   }
 
   .input-sidebar-premium {
     padding: 20px;
+    width: 100%;
+    order: 1 !important;           /* Kunci posisi Step 1 tetap di ATAS */
   }
 
   .panel-header-badge {
@@ -672,18 +675,25 @@ const triggerAIEngine = async () => {
 
   .output-content-area {
     padding: 20px;
+    width: 100%;
+    order: 2 !important;           /* Kunci posisi Workspace tetap di BAWAH */
   }
 }
 
 /* Tablet (768px and below) */
 @media (max-width: 768px) {
   .layout-grid {
-    grid-template-columns: 1fr;
+    display: flex !important;
+    flex-direction: column !important;
     gap: 16px;
   }
-
+  
   .input-sidebar-premium {
-    padding: 16px;
+    order: 1 !important;
+  }
+  
+  .output-content-area {
+    order: 2 !important;
   }
 
   .panel-header-badge {
@@ -789,12 +799,17 @@ const triggerAIEngine = async () => {
 /* Mobile (480px and below) */
 @media (max-width: 480px) {
   .layout-grid {
-    grid-template-columns: 1fr;
+    display: flex !important;
+    flex-direction: column !important;
     gap: 12px;
   }
-
+  
   .input-sidebar-premium {
-    padding: 12px;
+    order: 1 !important;
+  }
+  
+  .output-content-area {
+    order: 2 !important;
   }
 
   .panel-header-badge {
@@ -830,10 +845,6 @@ const triggerAIEngine = async () => {
     margin: 10px 0 3px 0;
   }
 
-  .browse-link {
-    display: inline;
-  }
-
   .sub-upload-text {
     font-size: 9px;
     display: block;
@@ -852,8 +863,6 @@ const triggerAIEngine = async () => {
 
   .file-name-text {
     font-size: 10px;
-    max-width: 100%;
-    flex: 1 1 auto;
   }
 
   .file-size-badge {
