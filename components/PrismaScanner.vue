@@ -10,6 +10,9 @@ const isProcessing = ref(false)
 const generatedData = ref(null)
 const fileInputRef = ref(null)
 
+// State tambahan untuk melacak aktivasi menu lanjut ke Step 2
+const isStep2Ready = ref(false)
+
 const handleFileChange = (event) => {
   const file = event.target.files[0]
   if (file && file.type.startsWith('image/')) {
@@ -63,6 +66,7 @@ const triggerAIEngine = async () => {
   
   isProcessing.value = true
   generatedData.value = null
+  isStep2Ready.value = false // Reset status tombol lanjut setiap kali generate ulang
 
   try {
     // Proses simulasi kalkulasi AI Vision dengan delay
@@ -78,15 +82,19 @@ const triggerAIEngine = async () => {
         { stage: 'Included', source: 'Final Synthesis', count: '14 papers', criteria: 'Memenuhi seluruh kriteria inklusi metodologi PRISMA' }
       ]
     }
-    
-    // Mengirimkan data ke parent (index.vue) untuk mengaktifkan tahap bibliometrik di bawah
-    emit('prisma-processed', generatedData.value)
   } catch (error) {
     console.error('Error dalam AI Engine:', error)
     alert('Terjadi kesalahan saat memproses. Silakan coba lagi.')
   } finally {
     isProcessing.value = false
   }
+}
+
+// Fungsi baru untuk menu lanjut (Opsional Klik)
+const proceedToStep2 = () => {
+  isStep2Ready.value = true
+  // Mengirimkan data ke parent (index.vue) HANYA KETIKA tombol lanjut diklik
+  emit('prisma-processed', generatedData.value)
 }
 </script>
 
@@ -97,7 +105,6 @@ const triggerAIEngine = async () => {
       <h3 class="panel-heading">PRISMA Flowchart Upload</h3>
       <p class="panel-subheading">Sistem AI akan mengekstrak skema gambar biner alur dokumentasi menjadi data matriks Scopus.</p>
       
-      <!-- Input File (Hidden) -->
       <input 
         ref="fileInputRef"
         type="file" 
@@ -106,7 +113,6 @@ const triggerAIEngine = async () => {
         style="display: none;" 
       />
       
-      <!-- Dropzone -->
       <div 
         class="premium-dropzone" 
         :class="{ 'has-file': previewUrl }"
@@ -196,6 +202,19 @@ const triggerAIEngine = async () => {
             <p><strong>• Sistem Integrasi Lintas Sektor:</strong> Mengeksplorasi interoperabilitas platform kontrak pintar (smart contracts) antardokumen kebijakan multilateral di Asia Tenggara.</p>
           </div>
         </div>
+
+        <div class="action-footer-container" style="margin-top: 30px; text-align: right;">
+          <button 
+            v-if="!isStep2Ready"
+            @click="proceedToStep2" 
+            class="btn-next-step"
+          >
+            Lanjut ke Step 2 (Analisis Bibliometrik) ➔
+          </button>
+          <div v-else class="success-badge-step">
+            ✅ Protokol Step 2 Berhasil Diaktifkan di Workspace Bawah
+          </div>
+        </div>
       </div>
 
       <div v-else class="empty-placeholder">
@@ -217,7 +236,7 @@ const triggerAIEngine = async () => {
   width: 100%;
 }
 
-/* REVOLUSI UI/UX DI KOLOM SISI KIRI */
+/* UI/UX DI KOLOM SISI KIRI */
 .input-sidebar-premium {
   background: #ffffff;
   padding: 25px;
@@ -416,18 +435,35 @@ const triggerAIEngine = async () => {
   border-color: #475569;
 }
 
-.btn-premium-action:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(30, 41, 59, 0.2);
+/* STYLE TOMBOL MENU LANJUT STEP 2 PREMIUM */
+.btn-next-step {
+  padding: 12px 24px;
+  background: #0d9488;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.2);
 }
 
-.btn-premium-action:disabled {
-  background: linear-gradient(135deg, #cbd5e1 0%, #a1a5b0 100%);
-  color: #64748b;
-  opacity: 0.6;
-  cursor: not-allowed;
-  border-color: #cbd5e1;
-  box-shadow: none;
+.btn-next-step:hover {
+  background: #0f766e;
+  transform: translateX(4px);
+  box-shadow: 0 6px 12px -1px rgba(13, 148, 136, 0.4);
+}
+
+.success-badge-step {
+  display: inline-block;
+  padding: 10px 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
 }
 
 /* OUTPUT CONTENT AREA */
@@ -650,15 +686,15 @@ const triggerAIEngine = async () => {
 /* Tablet & Mobile (1024px and below) */
 @media (max-width: 1024px) {
   .layout-grid {
-    display: flex !important;      /* Paksa berubah dari grid jadi flexbox */
-    flex-direction: column !important; /* Paksa tumpukan biner turun ke bawah */
+    display: flex !important;
+    flex-direction: column !important;
     gap: 20px;
   }
 
   .input-sidebar-premium {
     padding: 20px;
     width: 100%;
-    order: 1 !important;           /* Kunci posisi Step 1 tetap di ATAS */
+    order: 1 !important;
   }
 
   .panel-header-badge {
@@ -676,7 +712,7 @@ const triggerAIEngine = async () => {
   .output-content-area {
     padding: 20px;
     width: 100%;
-    order: 2 !important;           /* Kunci posisi Workspace tetap di BAWAH */
+    order: 2 !important;
   }
 }
 
