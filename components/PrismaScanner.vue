@@ -82,6 +82,7 @@ const triggerAIEngine = async () => {
         { stage: 'Included', source: 'Final Synthesis', count: '14 papers', criteria: 'Memenuhi seluruh kriteria inklusi metodologi PRISMA' }
       ]
     }
+    // Jangan emit ke Step 2 - tetap di Step 1 hingga user klik tombol Lanjut
   } catch (error) {
     console.error('Error dalam AI Engine:', error)
     alert('Terjadi kesalahan saat memproses. Silakan coba lagi.')
@@ -90,7 +91,7 @@ const triggerAIEngine = async () => {
   }
 }
 
-// Fungsi baru untuk menu lanjut (Opsional Klik)
+// Fungsi untuk menu lanjut - emit HANYA ketika user klik tombol Lanjut
 const proceedToStep2 = () => {
   isStep2Ready.value = true
   // Mengirimkan data ke parent (index.vue) HANYA KETIKA tombol lanjut diklik
