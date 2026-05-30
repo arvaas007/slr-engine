@@ -253,32 +253,64 @@ const switchFeature = (featureName) => {
 </template>
 
 <style scoped>
-.biblio-container { background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: relative; }
+.biblio-container { background: #ffffff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: relative; box-sizing: border-box; width: 100%; overflow-x: hidden; }
 .panel-header-badge-blue { position: absolute; top: -12px; left: 25px; background: #2563eb; color: #ffffff; font-size: 10px; font-weight: bold; padding: 4px 12px; border-radius: 20px; letter-spacing: 1px; }
-.section-title { margin-top: 10px; color: #1e293b; font-size: 18px; }
-.section-desc { font-size: 13px; color: #64748b; margin: -5px 0 20px 0; line-height: 1.5; }
-.logic-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-.tab-btn { padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; color: #475569; transition: all 0.2s; }
+.section-title { margin-top: 10px; color: #1e293b; font-size: 18px; word-break: break-word; }
+.section-desc { font-size: 13px; color: #64748b; margin: -5px 0 20px 0; line-height: 1.5; word-break: break-word; }
+.logic-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; width: 100%; }
+.tab-btn { padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; color: #475569; transition: all 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
 .tab-btn.active { color: white; }
 .tab-btn.vos.active { background: #2980b9; border-color: #2980b9; }
 .tab-btn.rstudio.active { background: #27ae60; border-color: #27ae60; }
 .tab-btn.nvivo.active { background: #9c27b0; border-color: #9c27b0; }
-.upload-box-premium { border: 2px dashed #cbd5e1; padding: 30px; text-align: center; border-radius: 8px; background: #f8fafc; position: relative; cursor: pointer; }
+.upload-box-premium { border: 2px dashed #cbd5e1; padding: 30px; text-align: center; border-radius: 8px; background: #f8fafc; position: relative; cursor: pointer; box-sizing: border-box; width: 100%; }
 .file-input-hidden { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-.upload-icon { font-size: 32px; }
-.upload-text { margin: 8px 0 0 0; font-size: 13px; font-weight: 600; color: #334155; }
-.upload-subtext { font-size: 11px; color: #94a3b8; display: block; margin-top: 4px; }
-.file-list-box { margin-top: 20px; background: #f1f5f9; padding: 15px; border-radius: 8px; text-align: left; }
-.file-list-box h4 { margin: 0 0 10px 0; font-size: 12px; color: #334155; }
+.upload-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+.upload-text { margin: 8px 0 0 0; font-size: 13px; font-weight: 600; color: #334155; word-break: break-word; }
+.upload-subtext { font-size: 11px; color: #94a3b8; display: block; margin-top: 4px; word-break: break-word; }
+.file-list-box { margin-top: 20px; background: #f1f5f9; padding: 15px; border-radius: 8px; text-align: left; box-sizing: border-box; width: 100%; }
+.file-list-box h4 { margin: 0 0 10px 0; font-size: 12px; color: #334155; word-break: break-word; }
 .file-badges { display: flex; flex-wrap: wrap; gap: 8px; }
-.badge-item { background: white; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; color: #334155; }
-.loader-container { text-align: center; padding: 25px 0; font-size: 12px; color: #64748b; }
+.badge-item { background: white; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; color: #334155; word-break: break-word; }
+.loader-container { text-align: center; padding: 25px; font-size: 12px; color: #64748b; }
 .spinner-mini { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 0 auto 8px auto; }
-.visualizer-card { margin-top: 25px; border-top: 2px dashed #e2e8f0; padding-top: 20px; }
-.card-title { margin: 0; font-size: 15px; font-weight: bold; }
+.visualizer-card { margin-top: 25px; border-top: 2px dashed #e2e8f0; padding-top: 20px; overflow-x: hidden; }
+.card-title { margin: 0; font-size: 15px; font-weight: bold; word-break: break-word; }
 .text-vos { color: #2980b9; }
 .text-rstudio { color: #27ae60; }
 .text-nvivo { color: #9c27b0; }
-.card-subtitle { font-size: 12px; color: #64748b; margin: 3px 0 15px 0; }
+.card-subtitle { font-size: 12px; color: #64748b; margin: 3px 0 15px 0; word-break: break-word; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+@media (max-width: 768px) {
+  .biblio-container { padding: 16px; }
+  .panel-header-badge-blue { left: 16px; font-size: 9px; padding: 3px 10px; }
+  .section-title { font-size: 16px; }
+  .section-desc { font-size: 12px; margin-bottom: 16px; }
+  .logic-tabs { gap: 8px; margin-bottom: 16px; }
+  .tab-btn { padding: 10px; font-size: 10px; }
+  .upload-box-premium { padding: 20px; }
+  .upload-icon { font-size: 28px; }
+  .file-list-box { padding: 12px; }
+  .card-title { font-size: 14px; }
+}
+
+@media (max-width: 480px) {
+  .biblio-container { padding: 12px; }
+  .panel-header-badge-blue { left: 12px; top: -10px; font-size: 8px; padding: 2px 8px; }
+  .section-title { margin-top: 6px; font-size: 14px; }
+  .section-desc { font-size: 11px; margin-bottom: 12px; }
+  .logic-tabs { grid-template-columns: 1fr; gap: 8px; margin-bottom: 12px; }
+  .tab-btn { padding: 8px; font-size: 10px; }
+  .upload-box-premium { padding: 16px; border-radius: 6px; }
+  .upload-icon { font-size: 24px; }
+  .upload-text { font-size: 12px; }
+  .upload-subtext { font-size: 10px; }
+  .file-list-box { margin-top: 12px; padding: 10px; }
+  .file-list-box h4 { font-size: 11px; }
+  .badge-item { font-size: 10px; padding: 3px 8px; }
+  .loader-container { padding: 20px; font-size: 11px; }
+  .card-title { font-size: 13px; }
+  .card-subtitle { font-size: 11px; }
+}
 </style>

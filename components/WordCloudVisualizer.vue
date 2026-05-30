@@ -155,25 +155,65 @@ const switchLogic = (logicName) => {
 </template>
 
 <style scoped>
-.biblio-container { background: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #dadce0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-.section-title { margin-top: 0; color: #1a73e8; font-size: 18px; }
-.section-desc { font-size: 13px; color: #5f6368; margin: -5px 0 20px 0; }
-.logic-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
-.tab-btn { padding: 10px; background: #f1f3f4; border: 1px solid #dadce0; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; }
+.biblio-container { background: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #dadce0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); box-sizing: border-box; width: 100%; overflow-x: hidden; }
+.section-title { margin-top: 0; color: #1a73e8; font-size: 18px; word-break: break-word; }
+.section-desc { font-size: 13px; color: #5f6368; margin: -5px 0 20px 0; word-break: break-word; }
+.logic-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; width: 100%; }
+.tab-btn { padding: 10px; background: #f1f3f4; border: 1px solid #dadce0; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; transition: all 0.2s; }
 .tab-btn.active { color: white; }
 .tab-btn.vos.active { background: #2980b9; }
 .tab-btn.rstudio.active { background: #27ae60; }
 .tab-btn.nvivo.active { background: #9c27b0; }
-.upload-box { border: 2px dashed #1a73e8; padding: 25px; text-align: center; border-radius: 6px; background: #f8f9fa; position: relative; cursor: pointer; }
+.upload-box { border: 2px dashed #1a73e8; padding: 25px; text-align: center; border-radius: 6px; background: #f8f9fa; position: relative; cursor: pointer; box-sizing: border-box; width: 100%; }
 .file-input-hidden { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-.upload-icon { font-size: 35px; }
-.file-list { margin-top: 20px; background: #f1f3f4; padding: 15px; border-radius: 6px; }
+.upload-icon { font-size: 35px; display: block; margin-bottom: 8px; }
+.upload-text { font-size: 13px; font-weight: 600; color: #202124; word-break: break-word; margin: 8px 0 0 0; }
+.upload-subtext { font-size: 12px; color: #5f6368; display: block; margin-top: 4px; word-break: break-word; }
+.file-list { margin-top: 20px; background: #f1f3f4; padding: 15px; border-radius: 6px; box-sizing: border-box; width: 100%; }
+.file-list h4 { margin: 0 0 10px 0; font-size: 12px; color: #202124; word-break: break-word; }
 .file-badges { display: flex; flex-wrap: wrap; gap: 8px; }
-.file-badge { background: #ffffff; border: 1px solid #ccc; padding: 4px 10px; border-radius: 4px; font-size: 11px; }
-.loader-container { text-align: center; padding: 30px 0; font-size: 13px; }
+.file-badge { background: #ffffff; border: 1px solid #ccc; padding: 4px 10px; border-radius: 4px; font-size: 11px; word-break: break-word; }
+.loader-container { text-align: center; padding: 30px; font-size: 13px; }
 .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #1a73e8; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 10px auto; }
-.word-cloud-canvas { background: #fafafa; padding: 30px; border-radius: 8px; border: 1px solid #f1f3f4; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 18px; }
-.ai-filter-insight { margin-top: 20px; background: #e8f0fe; border-left: 4px solid #1a73e8; padding: 12px 15px; border-radius: 0 6px 6px 0; font-size: 13px; text-align: justify; }
-.ai-filter-insight h5 { margin: 0 0 5px 0; color: #1a73e8; }
+.visualizer-card { margin-top: 25px; border-top: 2px dashed #e2e8f0; padding-top: 20px; box-sizing: border-box; width: 100%; }
+.card-title { margin: 0; font-size: 14px; font-weight: bold; word-break: break-word; }
+.card-subtitle { font-size: 12px; color: #5f6368; margin: 3px 0 15px 0; word-break: break-word; }
+.word-cloud-canvas { background: #fafafa; padding: 30px; border-radius: 8px; border: 1px solid #f1f3f4; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 18px; box-sizing: border-box; width: 100%; }
+.cloud-tag { display: inline-block; font-weight: bold; cursor: pointer; transition: all 0.3s ease; word-break: break-word; }
+.tag-weight { font-size: 10px; font-weight: normal; color: #94a3b8; margin-left: 4px; }
+.ai-filter-insight { margin-top: 20px; background: #e8f0fe; border-left: 4px solid #1a73e8; padding: 12px 15px; border-radius: 0 6px 6px 0; font-size: 13px; text-align: justify; box-sizing: border-box; width: 100%; }
+.ai-filter-insight h5 { margin: 0 0 5px 0; color: #1a73e8; word-break: break-word; }
+.ai-filter-insight p { margin: 0; word-break: break-word; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+@media (max-width: 768px) {
+  .biblio-container { padding: 16px; }
+  .section-title { font-size: 16px; }
+  .section-desc { font-size: 12px; margin-bottom: 16px; }
+  .logic-tabs { gap: 8px; margin-bottom: 12px; }
+  .tab-btn { padding: 8px; font-size: 11px; }
+  .upload-box { padding: 20px; }
+  .upload-icon { font-size: 28px; }
+  .word-cloud-canvas { padding: 20px; gap: 12px; }
+}
+
+@media (max-width: 480px) {
+  .biblio-container { padding: 12px; }
+  .section-title { font-size: 14px; }
+  .section-desc { font-size: 11px; margin-bottom: 12px; }
+  .logic-tabs { grid-template-columns: 1fr; gap: 6px; margin-bottom: 12px; }
+  .tab-btn { padding: 6px; font-size: 10px; width: 100%; }
+  .upload-box { padding: 16px; border-radius: 6px; }
+  .upload-icon { font-size: 24px; }
+  .upload-text { font-size: 11px; }
+  .upload-subtext { font-size: 10px; }
+  .file-list { margin-top: 12px; padding: 10px; }
+  .file-list h4 { font-size: 11px; }
+  .file-badge { font-size: 10px; padding: 3px 8px; }
+  .loader-container { padding: 20px; font-size: 11px; }
+  .word-cloud-canvas { padding: 16px; gap: 8px; }
+  .card-title { font-size: 12px; }
+  .card-subtitle { font-size: 11px; }
+  .ai-filter-insight { padding: 10px 12px; font-size: 11px; }
+}
 </style>
