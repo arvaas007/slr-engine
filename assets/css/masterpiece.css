@@ -1,0 +1,27 @@
+/* MANAGEMENT DESAIN VISUAL MASTERPIECE */
+:root {
+  --vos-color: #2980b9;
+  --rstudio-color: #27ae60;
+  --nvivo-color: #9c27b0;
+}
+
+.cloud-tag {
+  display: inline-block;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  border: 1px solid #f1f3f4;
+}
+
+.cloud-tag:hover {
+  transform: translateY(-5px) scale(1.15);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+  background: #ffffff;
+}
+
+.tab-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
