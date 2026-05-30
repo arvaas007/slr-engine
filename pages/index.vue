@@ -96,9 +96,12 @@ const scrollToStep = (step) => {
           <h3 class="section-title">Word Cloud Analisis</h3>
           <WordCloudVisualizer :parsedPapers="globalParsedPapers" />
         </div>
+      
+
+
+      
       </section>
 
-      <!-- NAVIGATION BUTTONS -->
       <div class="step-navigation">
         <button 
           v-if="activeStep > 1"
