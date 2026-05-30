@@ -29,6 +29,12 @@
       "@@/*": [
         "../*"
       ],
+      "vue-router": [
+        "../node_modules/vue-router"
+      ],
+      "vue-router/auto-routes": [
+        "../node_modules/vue-router/vue-router-auto-routes"
+      ],
       "nuxt": [
         "../node_modules/nuxt"
       ],
