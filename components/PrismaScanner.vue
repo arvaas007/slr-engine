@@ -8,12 +8,50 @@ const previewUrl = ref(null)
 const researchFocus = ref('Islamic Social Finance & Technology')
 const isProcessing = ref(false)
 const generatedData = ref(null)
+const fileInputRef = ref(null)
 
 const handleFileChange = (event) => {
   const file = event.target.files[0]
-  if (file) {
+  if (file && file.type.startsWith('image/')) {
     selectedFile.value = file
-    previewUrl.value = URL.createObjectURL(file)
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      previewUrl.value = e.target.result
+    }
+    reader.readAsDataURL(file)
+  } else {
+    alert('Silakan pilih file gambar yang valid (PNG, JPG, JPEG)')
+  }
+}
+
+const triggerFileInput = () => {
+  if (fileInputRef.value) {
+    fileInputRef.value.click()
+  }
+}
+
+const handleDragOver = (e) => {
+  e.preventDefault()
+  e.stopPropagation()
+}
+
+const handleDrop = (e) => {
+  e.preventDefault()
+  e.stopPropagation()
+  
+  const files = e.dataTransfer.files
+  if (files && files[0]) {
+    const file = files[0]
+    if (file.type.startsWith('image/')) {
+      selectedFile.value = file
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        previewUrl.value = event.target.result
+      }
+      reader.readAsDataURL(file)
+    } else {
+      alert('Silakan pilih file gambar yang valid (PNG, JPG, JPEG)')
+    }
   }
 }
 
@@ -22,26 +60,33 @@ const triggerAIEngine = async () => {
     alert('Silakan unggah file gambar diagram PRISMA Anda terlebih dahulu!')
     return
   }
+  
   isProcessing.value = true
   generatedData.value = null
 
-  // Proses simulasi kalkulasi AI Vision
-  await new Promise((resolve) => setTimeout(resolve, 1800))
-  
-  generatedData.value = {
-    scopusTable: [
-      { stage: 'Identification', source: 'Scopus Database', count: '142 papers', criteria: 'Keywords: ("Islamic fintech" OR "zakat") AND "blockchain"' },
-      { stage: 'Identification', source: 'Dimensions API', count: '85 papers', criteria: 'Keywords sejajar, filter publikasi 2020-2026' },
-      { stage: 'Screening', source: 'Duplication Removal', count: '168 papers', criteria: 'Pembersihan otomatis via EndNote & Rayyan AI' },
-      { stage: 'Screening', source: 'Title & Abstract', count: '45 papers', criteria: 'Eksklusi: Tidak membahas framework resiliensi ekonomi' },
-      { stage: 'Eligibility', source: 'Full-Text Assessment', count: '22 papers', criteria: 'Eksklusi: Hanya berbentuk short commentary/review' },
-      { stage: 'Included', source: 'Final Synthesis', count: '14 papers', criteria: 'Memenuhi seluruh kriteria inklusi metodologi PRISMA' }
-    ]
+  try {
+    // Proses simulasi kalkulasi AI Vision dengan delay
+    await new Promise((resolve) => setTimeout(resolve, 1800))
+    
+    generatedData.value = {
+      scopusTable: [
+        { stage: 'Identification', source: 'Scopus Database', count: '142 papers', criteria: 'Keywords: ("Islamic fintech" OR "zakat") AND "blockchain"' },
+        { stage: 'Identification', source: 'Dimensions API', count: '85 papers', criteria: 'Keywords sejajar, filter publikasi 2020-2026' },
+        { stage: 'Screening', source: 'Duplication Removal', count: '168 papers', criteria: 'Pembersihan otomatis via EndNote & Rayyan AI' },
+        { stage: 'Screening', source: 'Title & Abstract', count: '45 papers', criteria: 'Eksklusi: Tidak membahas framework resiliensi ekonomi' },
+        { stage: 'Eligibility', source: 'Full-Text Assessment', count: '22 papers', criteria: 'Eksklusi: Hanya berbentuk short commentary/review' },
+        { stage: 'Included', source: 'Final Synthesis', count: '14 papers', criteria: 'Memenuhi seluruh kriteria inklusi metodologi PRISMA' }
+      ]
+    }
+    
+    // Mengirimkan data ke parent (index.vue) untuk mengaktifkan tahap bibliometrik di bawah
+    emit('prisma-processed', generatedData.value)
+  } catch (error) {
+    console.error('Error dalam AI Engine:', error)
+    alert('Terjadi kesalahan saat memproses. Silakan coba lagi.')
+  } finally {
+    isProcessing.value = false
   }
-  
-  isProcessing.value = false
-  // Mengirimkan data ke parent (index.vue) untuk mengaktifkan tahap bibliometrik di bawah
-  emit('prisma-processed', generatedData.value)
 }
 </script>
 
@@ -52,15 +97,30 @@ const triggerAIEngine = async () => {
       <h3 class="panel-heading">PRISMA Flowchart Upload</h3>
       <p class="panel-subheading">Sistem AI akan mengekstrak skema gambar biner alur dokumentasi menjadi data matriks Scopus.</p>
       
-      <div class="premium-dropzone" :class="{ 'has-file': previewUrl }">
-        <input type="file" accept="image/*" @change="handleFileChange" class="hidden-input" />
+      <!-- Input File (Hidden) -->
+      <input 
+        ref="fileInputRef"
+        type="file" 
+        accept="image/*" 
+        @change="handleFileChange" 
+        style="display: none;" 
+      />
+      
+      <!-- Dropzone -->
+      <div 
+        class="premium-dropzone" 
+        :class="{ 'has-file': previewUrl }"
+        @click="triggerFileInput"
+        @dragover="handleDragOver"
+        @drop="handleDrop"
+      >
         <div v-if="!previewUrl" class="dropzone-placeholder">
           <div class="animated-cloud-icon">📤</div>
           <p class="main-upload-text">Tarik gambar ke sini atau <span class="browse-link">Cari Berkas</span></p>
           <span class="sub-upload-text">Mendukung format PNG, JPG, JPEG dari chart PRISMA</span>
         </div>
         <div v-else class="dropzone-preview">
-          <img :src="previewUrl" class="img-preview-smooth" />
+          <img :src="previewUrl" class="img-preview-smooth" alt="PRISMA Diagram Preview" />
           <div class="file-info-overlay">
             <span class="file-name-text">📄 {{ selectedFile.name }}</span>
             <span class="file-size-badge">{{ (selectedFile.size / 1024).toFixed(1) }} KB</span>
@@ -70,10 +130,19 @@ const triggerAIEngine = async () => {
 
       <div class="form-group">
         <label class="form-label-premium">Fokus Klaster Teori / Tren Riset:</label>
-        <input v-model="researchFocus" type="text" class="form-control-premium" placeholder="Misal: Islamic Social Finance & Technology" />
+        <input 
+          v-model="researchFocus" 
+          type="text" 
+          class="form-control-premium" 
+          placeholder="Misal: Islamic Social Finance & Technology" 
+        />
       </div>
 
-      <button @click="triggerAIEngine" :disabled="isProcessing" class="btn-premium-action">
+      <button 
+        @click="triggerAIEngine" 
+        :disabled="isProcessing || !selectedFile" 
+        class="btn-premium-action"
+      >
         <span v-if="isProcessing">🤖 Menjalankan Ekstraksi Vision AI...</span>
         <span v-else>🚀 Jalankan Protokol Sintesis AI</span>
       </button>
@@ -198,7 +267,8 @@ const triggerAIEngine = async () => {
   overflow: hidden;
 }
 
-.premium-dropzone:hover {
+.premium-dropzone:hover,
+.premium-dropzone.drag-over {
   border-color: #3b82f6;
   background: #f0f6ff;
   transform: translateY(-2px);
@@ -323,29 +393,41 @@ const triggerAIEngine = async () => {
 .btn-premium-action {
   width: 100%;
   padding: 12px;
-  background: #1e293b;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   color: white;
-  border: none;
+  border: 2px solid #64748b;
   border-radius: 6px;
   font-weight: bold;
   font-size: 14px;
   margin-top: 20px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   box-sizing: border-box;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  box-shadow: 0 2px 8px rgba(30, 41, 59, 0.2);
 }
 
 .btn-premium-action:hover:not(:disabled) {
-  background: #0f172a;
-  transform: translateY(1px);
+  background: linear-gradient(135deg, #0f172a 0%, #000000 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(30, 41, 59, 0.4);
+  border-color: #475569;
+}
+
+.btn-premium-action:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(30, 41, 59, 0.2);
 }
 
 .btn-premium-action:disabled {
-  opacity: 0.7;
+  background: linear-gradient(135deg, #cbd5e1 0%, #a1a5b0 100%);
+  color: #64748b;
+  opacity: 0.6;
   cursor: not-allowed;
+  border-color: #cbd5e1;
+  box-shadow: none;
 }
 
 /* OUTPUT CONTENT AREA */
